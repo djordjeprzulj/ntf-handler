@@ -1,5 +1,6 @@
 package edu.ftn.iis.soas.ntf.handler.service.impl;
 
+import edu.ftn.iis.soas.ntf.handler.client.NtfTelegramClient;
 import org.springframework.stereotype.Service;
 
 import edu.ftn.iis.soas.domain.model.Notification;
@@ -15,6 +16,7 @@ public class NtfHandlerServiceImpl implements NtfHandlerService {
 
 	private final NtfLoggerClient ntfLoggerClient;
 	private final NtfEmailClient ntfEmailClient;
+	private final NtfTelegramClient ntfTelegramClient;
 	
 	@Override
 	public String handleNotificationRequest(NotificationRequest request) {
@@ -28,14 +30,19 @@ public class NtfHandlerServiceImpl implements NtfHandlerService {
 				Notification notification = new Notification();
 				notification.setDestination(destination.trim());
 				notification.setPayload(request.getText());
-				ntfEmailClient.send(notification);	
+				ntfEmailClient.send(notification);
 				// TODO log sent notification
-			}			
+			}
+			return "OK";
+		} else if (channel.equalsIgnoreCase("telegram")) {
+			Notification notification = new Notification();
+			notification.setDestination(request.getDestinations());
+			notification.setPayload(request.getText());
+			return ntfTelegramClient.send(notification);
+			// TODO log sent notification
 		} else {
 			return "Channel " + channel + " not supported.";
 		}
-	
-		return response;
 	}
 
 }

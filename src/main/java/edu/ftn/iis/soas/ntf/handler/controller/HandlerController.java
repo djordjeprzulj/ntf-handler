@@ -24,8 +24,8 @@ public class HandlerController {
 	@PostMapping("/handle")
 	public NotificationResponse handle(@RequestBody NotificationRequest request) {
 		log.info("handle call received");
-		ntfHandlerService.handleNotificationRequest(request);
-		return new NotificationResponse(request.getSource(),"OK");
+		String status = ntfHandlerService.handleNotificationRequest(request);
+		return new NotificationResponse(status, request.getSource());
 	}
 		
 }
